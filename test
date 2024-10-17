@@ -1,0 +1,55 @@
+// HORIZONTAL SCROLLING CANVASES
+
+"use strict";
+
+let stickyParentDiv = document.createElement("div");
+stickyParentDiv.className = "sticky-parent";
+
+let stickyDiv = document.createElement("div");
+stickyDiv.className = "sticky";
+
+let horizontalDiv = document.createElement("div");
+horizontalDiv.className = "horizontal";
+
+// Change canvas names here
+let targetElements = document.querySelectorAll("#one, #two, #three, #four");
+
+for(let i = 0; i < targetElements.length; i++){
+  targetElements[i].parentNode.insertBefore(stickyParentDiv, targetElements[i]);
+  stickyParentDiv.appendChild(stickyDiv);
+  stickyDiv.appendChild(horizontalDiv);
+  horizontalDiv.appendChild(targetElements[i]);
+}
+
+// Adding scroll event listener
+document.addEventListener('scroll', horizontalScroll);
+
+//Selecting Elements
+let sticky = document.querySelector('.sticky');
+let stickyParent = document.querySelector('.sticky-parent');
+let horizontalDivs = document.querySelectorAll('.horizontal-div');
+
+let scrollWidth = sticky.scrollWidth;
+let verticalScrollHeight = stickyParent.getBoundingClientRect().height-sticky.getBoundingClientRect().height;
+
+//Scroll function 
+function horizontalScroll(){
+
+    //Checking whether the sticky element has entered into view or not
+    let stickyPosition = sticky.getBoundingClientRect().top;
+    if(stickyPosition > 1){
+        sticky.classList.remove('sticky-fixed');
+        return;
+    } else {
+        let scrolled = stickyParent.getBoundingClientRect().top; //how much is scrolled?
+        sticky.scrollLeft = (scrollWidth/verticalScrollHeight)*(-scrolled)*1;
+        sticky.classList.add('sticky-fixed');
+        let horizontalDivsWidth = 0;
+        horizontalDivs.forEach((div) => {
+            horizontalDivsWidth += div.getBoundingClientRect().width;
+        });
+        if (scrolled > horizontalDivsWidth) {
+            sticky.classList.remove('sticky-fixed');
+        }
+    }
+}
